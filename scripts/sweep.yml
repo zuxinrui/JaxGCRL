@@ -18,7 +18,7 @@ parameters:
     min: 0
     max: 100
     distribution: int_uniform
-  env_name:
+  env:
     value: "ant"
     distribution: constant
 command:
@@ -29,7 +29,7 @@ command:
   - "--episode_length"
   - "1000"
   - "--num_envs"
-  - "1024"
+  - "128"  # 1024
   - "--total_env_steps"
   - "50000000"
   - "--num_evals"
@@ -41,7 +41,7 @@ command:
   - "--action_repeat"
   - "1"
   - "--batch_size"
-  - "256"
+  - "256"  # 256
   - "--unroll_length"
   - "62"
   - "--train_step_multiplier"
