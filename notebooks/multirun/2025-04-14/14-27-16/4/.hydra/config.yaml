@@ -1,0 +1,5 @@
+num_timesteps: 20000000
+num_minibatches: 16
+num_envs: 4096
+batch_size: 1024
+error: true

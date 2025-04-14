@@ -1,0 +1,4 @@
+- num_timesteps=5000000
+- num_minibatches=32
+- num_envs=1024
+- batch_size=2048
