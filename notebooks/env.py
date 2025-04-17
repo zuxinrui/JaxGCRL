@@ -111,6 +111,7 @@ class HalfcheetahWithObstacles(PipelineEnv):
         n_frames = 5
 
         # Create and add obstacles
+        self.bth_r, self.bsh_r, self.bfo_r, self.fth_r, self.fsh_r, self.ffo_r = 1., 1., 1., 1., 1., 1.
         sys = self._change_env(path, write_path, obstacle_height, obstacle_width,
                                obstacle_spacing, n_obstacles, design=design)
 
@@ -135,7 +136,6 @@ class HalfcheetahWithObstacles(PipelineEnv):
         self._obstacle_width = obstacle_width
         self._obstacle_spacing = obstacle_spacing
         self._n_obstacles = n_obstacles
-        self.bth_r, self.bsh_r, self.bfo_r, self.fth_r, self.fsh_r, self.ffo_r = 1., 1., 1., 1., 1., 1.
 
     def _change_env(self, path, write_path, height, width, spacing, n_obstacles, design=None):
         with open(path, 'r') as fd:

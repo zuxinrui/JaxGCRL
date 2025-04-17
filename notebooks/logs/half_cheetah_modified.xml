@@ -29,7 +29,7 @@
 	<worldbody>
 		<light cutoff="100" diffuse="1 1 1" dir="-0 0 -1.3" directional="true" exponent="1" pos="0 0 1.3" specular=".1 .1 .1"></light>
 		<geom conaffinity="1" condim="3" material="MatPlane" name="floor" pos="0 0 0" size="40 40 40" type="plane" rgba="0.5 0.5 0.5 1.0"></geom>
-		<body name="torso" pos="0 0 0.6940240989280017">
+		<body name="torso" pos="0 0 0.9283273777339667">
 			<camera name="track" mode="trackcom" pos="0 -3 0.3" xyaxes="1 0 0 0 0 1"></camera>
 			<joint armature="0" axis="1 0 0" damping="0" limited="false" name="rootx" pos="0 0 0" stiffness="0" type="slide"></joint>
 			<joint armature="0" axis="0 0 1" damping="0" limited="false" name="rootz" pos="0 0 0" stiffness="0" type="slide"></joint>
@@ -38,58 +38,58 @@
 			<geom contype="1" axisangle="0 1 0 .87" name="head" pos=".6 0 .1" size="0.046 .15" type="capsule"></geom>
 			<body name="bthigh" pos="-.5 0 0">
 				<joint axis="0 1 0" damping="6" name="bthigh" pos="0 0 0" range="-.52 1.05" stiffness="240" type="hinge"></joint>
-				<geom contype="1" axisangle="0 1 0 -3.8" name="bthigh" pos="0.06992584215138108 0 -0.0909035947967954" size="0.046 0.10139247111950254" type="capsule"></geom>
-				<body name="bshin" pos="0.1118813474422097 0 -0.17481460537845267">
+				<geom contype="1" axisangle="0 1 0 -3.8" name="bthigh" pos="0.11407893850911649 0 -0.14830262006185144" size="0.046 0.1654144608382189" type="capsule"></geom>
+				<body name="bshin" pos="0.18252630161458636 0 -0.2851973462727912">
 					<joint axis="0 1 0" damping="4.5" name="bshin" pos="0 0 0" range="-.785 .785" stiffness="180" type="hinge"></joint>
-					<geom axisangle="0 1 0 -2.03" name="bshin" pos="-0.1414874075285524 0 -0.0707437037642762" size="0.046 0.15159365092344898" type="capsule"></geom>
-					<body name="bfoot" pos="-0.2829748150571048 0 -0.1414874075285524">
+					<geom axisangle="0 1 0 -2.03" name="bshin" pos="-0.12524812890538276 0 -0.06262406445269138" size="0.046 0.1341944238271958" type="capsule"></geom>
+					<body name="bfoot" pos="-0.2504962578107655 0 -0.12524812890538276">
 						<joint axis="0 1 0" damping="3" name="bfoot" pos="0 0 0" range="-.4 .785" stiffness="120" type="hinge"></joint>
-						<geom contype="1" axisangle="0 1 0 -.27" name="bfoot" pos="0.016293673457815617 0 -0.052682877513603836" size="0.046 0.05105351016782227" type="capsule"></geom>
+						<geom contype="1" axisangle="0 1 0 -.27" name="bfoot" pos="0.05178048897371916 0 -0.1674235810150253" size="0.046 0.16224553211765338" type="capsule"></geom>
 					</body>
 				</body>
 			</body>
 			<body name="fthigh" pos=".5 0 0">
 				<joint axis="0 1 0" damping="4.5" name="fthigh" pos="0 0 0" range="-1 .7" stiffness="180" type="hinge"></joint>
-				<geom contype="1" axisangle="0 1 0 .52" name="fthigh" pos="-0.03966003704655175 0 -0.06798863493694585" size="0.046 0.07535407038844831" type="capsule"></geom>
-				<body name="fshin" pos="-0.0793200740931035 0 -0.1359772698738917">
+				<geom contype="1" axisangle="0 1 0 .52" name="fthigh" pos="-0.07820339843928852 0 -0.134062968753066" size="0.046 0.14858645703464818" type="capsule"></geom>
+				<body name="fshin" pos="-0.15640679687857703 0 -0.268125937506132">
 					<joint axis="0 1 0" damping="3" name="fshin" pos="0 0 0" range="-1.2 .87" stiffness="120" type="hinge"></joint>
-					<geom axisangle="0 1 0 -.6" name="fshin" pos="0.08118498211255296 0 -0.11240997523276562" size="0.046 0.13239397082970172" type="capsule"></geom>
-					<body name="ffoot" pos="0.1623699642251059 0 -0.22481995046553124">
+					<geom axisangle="0 1 0 -.6" name="fshin" pos="0.07491780061919959 0 -0.10373233931889174" size="0.046 0.1221736440866947" type="capsule"></geom>
+					<body name="ffoot" pos="0.14983560123839917 0 -0.20746467863778348">
 						<joint axis="0 1 0" damping="1.5" name="ffoot" pos="0 0 0" range="-.5 .5" stiffness="60" type="hinge"></joint>
-						<geom contype="1" axisangle="0 1 0 -.6" name="ffoot" pos="0.08841701580368447 0 -0.13753758013906475" size="0.046 0.13753758013906475" type="capsule"></geom>
+						<geom contype="1" axisangle="0 1 0 -.6" name="ffoot" pos="0.041335118480021076 0 -0.0642990731911439" size="0.046 0.0642990731911439" type="capsule"></geom>
 					</body>
 				</body>
 			</body>
 		</body>
-		<body name="obstacle_0" pos="2.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_0" pos="1.012828306194097 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_1" pos="4.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_1" pos="2.025656612388194 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_2" pos="6.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_2" pos="3.038484918582291 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_3" pos="8.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_3" pos="4.051313224776388 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_4" pos="10.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_4" pos="5.064141530970485 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_5" pos="12.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_5" pos="6.076969837164582 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_6" pos="14.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_6" pos="7.08979814335868 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_7" pos="16.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_7" pos="8.102626449552776 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_8" pos="18.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_8" pos="9.115454755746873 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
-		<body name="obstacle_9" pos="20.0 0 0.1">
-			<geom type="box" size="0.25 1.0 0.1" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
+		<body name="obstacle_9" pos="10.12828306194097 0 0.20626858862718078">
+			<geom type="box" size="0.10931391619895665 1.0 0.20626858862718078" rgba="0.7 0.5 0.3 1.0" mass="0" contype="1" conaffinity="1"></geom>
 		</body>
 	</worldbody>
 	<actuator>
