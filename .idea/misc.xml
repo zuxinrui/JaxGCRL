@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="vu" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="$PROJECT_DIR$/../miniconda3/envs/jaxgcrl" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="jaxgcrl" project-jdk-type="Python SDK" />
 </project>
