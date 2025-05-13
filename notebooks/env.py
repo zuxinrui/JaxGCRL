@@ -24,6 +24,8 @@ import wandb
 import xmltodict
 import xml.etree.ElementTree as ET
 
+import types
+
 
 
 def adapt_xml(file, design=None):
@@ -796,7 +798,7 @@ class HalfcheetahMML(PipelineEnv):
                reset_noise_scale=0.1,
                exclude_current_positions_from_observation=True,
                # task switch
-               task_id: str = 'forward',
+               task_id=None,
                # obstacle params
                obstacle_height: float = 0.2,
                obstacle_width: float = 0.2,
@@ -807,11 +809,10 @@ class HalfcheetahMML(PipelineEnv):
                backend='generalized',
                **kwargs):
 
-    self._task = task_id.lower()        # save once
+    self._task = task_id        # save once
 
     path = epath.resource_path('brax') / 'envs/assets/half_cheetah.xml'
-    self.bth_r = self.bsh_r = self.bfo_r = 1.0
-    self.fth_r = self.fsh_r = self.ffo_r = 1.0
+    self.bth_r, self.bsh_r, self.bfo_r, self.fth_r, self.fsh_r, self.ffo_r = design
     sys = self._change_env(path, write_path,
                            obstacle_height, obstacle_width,
                            obstacle_spacing, n_obstacles,
@@ -836,11 +837,78 @@ class HalfcheetahMML(PipelineEnv):
         exclude_current_positions_from_observation
 
   # ----------------- terrain + morphology edits ----------------------
-  def _change_env(self, path, write_path,
-                  height, width, spacing, n_obstacles, design=None):
-    # (identical to your original helper – removed for brevity)
-    #  … add_obstacles, edit XML, load mjcf …
-    return mjcf.load(write_path)
+  def _change_env(self, path, write_path, height, width, spacing, n_obstacles, design=None):
+
+      add_obstacles(path, write_path, height, width, spacing, n_obstacles)
+
+      with open(write_path, 'r') as fd:
+          xml_string = fd.read()
+      if design is None:
+          bth_r, bsh_r, bfo_r, fth_r, fsh_r, ffo_r = np.random.uniform(low=0.5, high=2.0, size=6)
+      else:
+          bth_r, bsh_r, bfo_r, fth_r, fsh_r, ffo_r = design
+      height = max(.145 * bth_r + .15 * bsh_r + .094 * bfo_r, .133 * fth_r + .106 * fsh_r + .07 * ffo_r)
+      height *= 2.0 + 0.01
+
+      xml_dict = xmltodict.parse(xml_string)
+
+      torso = None
+      for body in xml_dict['mujoco']['worldbody']['body']:
+          if body.get('@name') == 'torso':
+              torso = body
+              break
+
+      if torso is None:
+          raise ValueError("Could not find torso body in XML")
+
+      # Update torso position
+      torso['@pos'] = f"0 0 {height}"
+
+      # Update leg components
+      # Back leg
+      back_thigh = torso['body'][0]  # bthigh
+      back_shin = back_thigh['body']  # bshin
+      back_foot = back_shin['body']  # bfoot
+
+      # Front leg
+      front_thigh = torso['body'][1]  # fthigh
+      front_shin = front_thigh['body']  # fshin
+      front_foot = front_shin['body']  # ffoot
+
+      # Back leg modifications
+      back_thigh['geom']['@pos'] = f"{.1 * bth_r} 0 {-.13 * bth_r}"
+      back_thigh['geom']['@size'] = f"0.046 {.145 * bth_r}"
+      back_thigh['body']['@pos'] = f"{.16 * bth_r} 0 {-.25 * bth_r}"
+
+      back_shin['geom']['@pos'] = f"{-.14 * bsh_r} 0 {-.07 * bsh_r}"
+      back_shin['geom']['@size'] = f"0.046 {.15 * bsh_r}"
+      back_shin['body']['@pos'] = f"{-.28 * bsh_r} 0 {-.14 * bsh_r}"
+
+      back_foot['geom']['@pos'] = f"{.03 * bfo_r} 0 {-.097 * bfo_r}"
+      back_foot['geom']['@size'] = f"0.046 {.094 * bfo_r}"
+
+      # Front leg modifications
+      front_thigh['geom']['@pos'] = f"{-.07 * fth_r} 0 {-.12 * fth_r}"
+      front_thigh['geom']['@size'] = f"0.046 {.133 * fth_r}"
+      front_thigh['body']['@pos'] = f"{-.14 * fth_r} 0 {-.24 * fth_r}"
+
+      front_shin['geom']['@pos'] = f"{.065 * fsh_r} 0 {-.09 * fsh_r}"
+      front_shin['geom']['@size'] = f"0.046 {.106 * fsh_r}"
+      front_shin['body']['@pos'] = f"{.13 * fsh_r} 0 {-.18 * fsh_r}"
+
+      front_foot['geom']['@pos'] = f"{.045 * ffo_r} 0 {-.07 * ffo_r}"
+      front_foot['geom']['@size'] = f"0.046 {.07 * ffo_r}"
+
+      xml_string = xmltodict.unparse(xml_dict, pretty=True)
+      with open(write_path, 'w') as fd:
+          fd.write(xml_string)
+
+      # Modify the XML file to change the morphology
+      self.bth_r, self.bsh_r, self.bfo_r, self.fth_r, self.fsh_r, self.ffo_r = bth_r, bsh_r, bfo_r, fth_r, fsh_r, ffo_r
+      print('Changing morphology', self.bth_r, self.bsh_r, self.bfo_r, self.fth_r, self.fsh_r, self.ffo_r)
+      sys = mjcf.load(write_path)
+
+      return sys
 
   # --------------------- JAX helpers ---------------------------------
   @staticmethod
@@ -871,6 +939,7 @@ class HalfcheetahMML(PipelineEnv):
     zero_b = jp.zeros((), dtype=jp.bool_)  # <── boolean zero
     metrics = dict(x_position=jp.zeros(()),
                    x_velocity=jp.zeros(()),
+                   cum_pitch=jp.zeros(()),
                    reward_ctrl=jp.zeros(()),
                    reward_run=jp.zeros(()),
                    reward_task=jp.zeros(()),  # ← add this line
@@ -894,6 +963,7 @@ class HalfcheetahMML(PipelineEnv):
     task_rew  = 0.0
     task_done = False
     task = self._task
+    cum_pitch = 0.0
 
     if task == 'forward':
       pass                                                 # only run reward
@@ -916,19 +986,22 @@ class HalfcheetahMML(PipelineEnv):
     elif task == 'backflip':
       pitch     = self._torso_pitch(ps)
       pitch_dot = (pitch - self._torso_pitch(ps0)) / self.dt
-      task_rew  = -0.1 * pitch_dot + jp.maximum(0.0, -x_vel)
+      task_rew  = -0.1 * pitch_dot - x_vel - 0.1 * pitch
       flipped   = jp.abs(pitch) > (2*jp.pi - 0.3)
       task_rew += jp.where(flipped, 15.0, 0.0)
       task_done = flipped
     elif task == 'forward_flip':
       pitch     = self._torso_pitch(ps)
       pitch_dot = (pitch - self._torso_pitch(ps0)) / self.dt
-      task_rew  = 0.1 * pitch_dot + jp.maximum(0.0, x_vel)
+      task_rew  = 0.1 * pitch_dot - x_vel + 0.1 * pitch
       flipped   = jp.abs(pitch) > (2*jp.pi - 0.3)
       task_rew += jp.where(flipped, 15.0, 0.0)
       task_done = flipped
+    elif isinstance(task, types.FunctionType):
+        # task is a function
+        task_rew, task_done, cum_pitch = task(ps, state, self.dt)
     else:
-      raise ValueError(f"Unknown task_id '{task}'")
+      raise ValueError(f"Unknown task")
 
     # ---------------------------------------------------------------
     total_rew = run_rew - ctrl_pen + task_rew
@@ -947,6 +1020,7 @@ class HalfcheetahMML(PipelineEnv):
     t = state.metrics['t'] + 1
     metrics = dict(x_position=ps.x.pos[0, 0],
                    x_velocity=x_vel,
+                   cum_pitch=cum_pitch,
                    reward_run=run_rew,
                    reward_ctrl=-ctrl_pen,
                    reward_task=task_rew,
