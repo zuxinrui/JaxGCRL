@@ -853,7 +853,16 @@ class HalfcheetahMML(PipelineEnv):
       xml_dict = xmltodict.parse(xml_string)
 
       torso = None
-      for body in xml_dict['mujoco']['worldbody']['body']:
+      bodies = xml_dict['mujoco']['worldbody'].get('body', [])
+      # If there was only one <body> tag, xmltodict gives us a dict (or even a str),
+      # so force it into a list
+      if not isinstance(bodies, list):
+          bodies = [bodies]
+
+      for body in bodies:
+          # skip over any pure‐string entries
+          if not isinstance(body, dict):
+              continue
           if body.get('@name') == 'torso':
               torso = body
               break
