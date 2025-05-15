@@ -12,6 +12,7 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 import optax
+from jsonschema.exceptions import best_match
 from orbax import checkpoint as ocp
 
 from brax.envs.base import PipelineEnv, State
@@ -949,6 +950,8 @@ class HalfcheetahMML(PipelineEnv):
     metrics = dict(x_position=jp.zeros(()),
                    x_velocity=jp.zeros(()),
                    cum_pitch=jp.zeros(()),
+                   n_flip=jp.zeros(()),
+                   best_pitch=jp.zeros(()),
                    reward_ctrl=jp.zeros(()),
                    reward_run=jp.zeros(()),
                    reward_task=jp.zeros(()),  # ← add this line
@@ -973,6 +976,9 @@ class HalfcheetahMML(PipelineEnv):
     task_done = False
     task = self._task
     cum_pitch = 0.0
+    n_flip = 0.0
+    dir = 0.0
+    best_pitch = state.metrics["best_pitch"]
 
     if task == 'forward':
       pass                                                 # only run reward
@@ -1008,7 +1014,9 @@ class HalfcheetahMML(PipelineEnv):
       task_done = flipped
     elif isinstance(task, types.FunctionType):
         # task is a function
-        task_rew, task_done, cum_pitch = task(ps, state, self.dt)
+        task_rew, task_done, cum_pitch, improved, n_flip = task(ps, state, self.dt)
+        if improved:
+            best_pitch = cum_pitch
     else:
       raise ValueError(f"Unknown task")
 
@@ -1030,6 +1038,8 @@ class HalfcheetahMML(PipelineEnv):
     metrics = dict(x_position=ps.x.pos[0, 0],
                    x_velocity=x_vel,
                    cum_pitch=cum_pitch,
+                   n_flip=n_flip,
+                   best_pitch=best_pitch,
                    reward_run=run_rew,
                    reward_ctrl=-ctrl_pen,
                    reward_task=task_rew,
