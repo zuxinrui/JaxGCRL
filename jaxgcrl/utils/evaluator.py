@@ -119,6 +119,8 @@ class ActorEvaluator:
             # (np.min, "_min"),
         ]
 
+        import logging
+        logging.info("Available episode metrics keys: %s", eval_metrics.episode_metrics.keys())
         for fn, suffix in aggregating_fns:
             metrics.update(
                 {

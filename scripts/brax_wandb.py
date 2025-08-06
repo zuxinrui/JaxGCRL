@@ -51,8 +51,12 @@ from etils import epath
 import wandb
 import xmltodict
 
-from ppo import ppo_train
-from env import HalfcheetahWithObstacles
+from notebooks.ppo import ppo_train
+from notebooks.env import HalfcheetahWithObstacles
+
+# Import the JaxGCRL  environment:
+from jaxgcrl.envs.manipulation.arm_push_easy import ArmPushEasy
+
 
 os.environ['XLA_PYTHON_CLIENT_PREALLOCATE'] = 'false'
 
@@ -62,24 +66,26 @@ run = wandb.init(
     name='zuxinrui',
     mode="online",
 )
-env = envs.get_environment(env_name='pusher', backend='spring')
+# env = envs.get_environment(env_name='pusher', backend='mjx')
+env = ArmPushEasy(backend='mjx')  # Use mjx backend for better rendering
 state = jax.jit(env.reset)(rng=jax.random.PRNGKey(seed=0))
 url = html.render(env.sys.tree_replace({"opt.timestep": env.dt}), [state.pipeline_state], height=1024)
 wandb.log({"env render": wandb.Html(url)})
-env = HalfcheetahWithObstacles(
-    obstacle_height=0.4,  # (0.2 - 0.5)
-    obstacle_width=0.2,  # (0.1 - 0.5)
-    obstacle_spacing=1.0,  # (0.5 - 2.0)
-    n_obstacles=10,  # 10
-    design=None,
-    backend='spring',
-)
-state = jax.jit(env.reset)(rng=jax.random.PRNGKey(seed=0))
 
-url = html.render(env.sys.tree_replace({"opt.timestep": env.dt}), [state.pipeline_state], height=1024)
+# env = HalfcheetahWithObstacles(
+#     obstacle_height=0.4,  # (0.2 - 0.5)
+#     obstacle_width=0.2,  # (0.1 - 0.5)
+#     obstacle_spacing=1.0,  # (0.5 - 2.0)
+#     n_obstacles=10,  # 10
+#     design=None,
+#     backend='spring',
+# )
+# state = jax.jit(env.reset)(rng=jax.random.PRNGKey(seed=0))
+# url = html.render(env.sys.tree_replace({"opt.timestep": env.dt}), [state.pipeline_state], height=1024)
 # with open(os.path.join(exp_dir, f"{exp_name}_{num_steps}.html"), "w") as file:
 #     file.write(url)
-wandb.log({"env render": wandb.Html(url)})
+# wandb.log({"env render": wandb.Html(url)})
+
 episode_length = 1000
 
 # # for halfcheetah:
@@ -105,7 +111,7 @@ episode_length = 1000
 # for pusher:
 train_fn = functools.partial(
     ppo_train,
-    num_timesteps=50_000_000,
+    num_timesteps=1_000_000,
     num_evals=3,
     reward_scaling=5,
     episode_length=episode_length,  # 1000
@@ -117,7 +123,7 @@ train_fn = functools.partial(
     discounting=0.95,
     learning_rate=3e-4,
     entropy_cost=1e-2,
-    num_envs=2048,  # 2048 on 4070 ti s is the fastest  p.s.: num_envs must be divisible by n_batch * batch_size (1+ times per env simulation in the batch)
+    num_envs=512,  # 2048 on 4070 ti s is the fastest  p.s.: num_envs must be divisible by n_batch * batch_size (1+ times per env simulation in the batch)
     batch_size=512,
     seed=3,
 )

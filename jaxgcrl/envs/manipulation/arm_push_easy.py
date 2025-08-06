@@ -15,7 +15,7 @@ See _get_obs() and ArmEnvs._convert_action() for details.
 
 class ArmPushEasy(ArmEnvs):
     def _get_xml_path(self):
-        return "envs/assets/panda_push_easy.xml"
+        return "jaxgcrl/envs/assets/panda_push_easy.xml"
 
     @property
     def action_size(self) -> int:
